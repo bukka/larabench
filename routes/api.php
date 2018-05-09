@@ -27,3 +27,6 @@ Route::get('/log/basic/{size?}', function ($size = 1024) {
     Log::error(str_repeat('a', $size));
     return 'done';
 });
+
+// Custom logging in the controller
+Route::get('/log/custom/{type}/{size?}', 'LogController@log');
