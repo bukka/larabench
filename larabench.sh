@@ -6,6 +6,7 @@ if readlink ${BASH_SOURCE[0]} > /dev/null; then
 else
 	LB_BASE="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 fi
+LB_VAR="$LB_BASE/system/var"
 
 function lb_error {
     echo $@ > /dev/stderr
@@ -30,7 +31,7 @@ function lb_start_fpm {
     fi
     LB_FPM_EXECUTABLE="php-$1"
     LB_FPM_TEMPLATE="$LB_BASE/system/php-fpm/$LB_FPM_NAME/fpm.conf"
-    LB_FPM_CONFIG="$LB_BASE/system/var/fpm.conf"
+    LB_FPM_CONFIG="$LB_VAR/fpm.conf"
 
     if [ ! -f "$LB_FPM_TEMPLATE" ]; then
         lb_error "FPM config file $LB_FPM_TEMPLATE does not exist"
@@ -43,7 +44,15 @@ function lb_start_fpm {
 }
 
 function lb_start_nginx {
-    echo "Starting nginx"
+    LB_BASE_NGINX="$LB_BASE/system/nginx"
+    LB_NGINX_CONF_SRC="$LB_BASE_NGINX/nginx.conf"
+    LB_NGINX_CONF_DST="$LB_VAR/nginx.conf"
+    lb_transform_template $LB_NGINX_CONF_SRC $LB_NGINX_CONF_DST
+    cp "$LB_BASE_NGINX/fastcgi_params" "$LB_VAR/"
+
+    LB_NGINX_CMD="nginx -c $LB_NGINX_CONF_DST"
+    echo "Larabench - starting nginx:"
+    lb_exec $LB_NGINX_CMD
 }
 
 function lb_start {
