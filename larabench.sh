@@ -20,7 +20,8 @@ function lb_exec {
 
 function lb_transform_template {
     cp $1 $2
-    sed -i "s!{{BASE_DIR}}!$LB_BASE!g" $2
+    sed -i.bak "s!{{BASE_DIR}}!$LB_BASE!g" $2
+    sed -i.bak "s!{{VAR_DIR}}!$LB_VAR!g" $2
 }
 
 function lb_start_fpm {
