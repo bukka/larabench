@@ -18,6 +18,11 @@ function lb_exec {
     exec $@
 }
 
+function lb_cmd {
+    echo $@
+    $@
+}
+
 function lb_transform_template {
     cp $1 $2
     sed -i.bak "s!{{BASE_DIR}}!$LB_BASE!g" $2
@@ -77,6 +82,31 @@ function lb_start {
     esac
 }
 
+function lb_run {
+    if [ -n "$1" ]; then
+        LB_RUN_PATH="$1"
+    else
+        LB_RUN_PATH=api/log/basic/128
+    fi
+    if [ -n "$2" ]; then
+        LB_RUN_THREADS="$2"
+    else
+        LB_RUN_THREADS=8
+    fi
+    if [ -n "$3" ]; then
+        LB_RUN_CONNS="$3"
+    else
+        LB_RUN_CONNS=8
+    fi
+    if [ -n "$4" ]; then
+        LB_RUN_APP="$4"
+    else
+        LB_RUN_APP=wrk
+    fi
+
+    lb_cmd $LB_RUN_APP -t$LB_RUN_THREADS -c$LB_RUN_CONNS http://localhost:8083/$LB_RUN_PATH
+}
+
 if [ -z "$1" ]; then
     lb_error "No action set"
 fi
@@ -85,6 +115,10 @@ case "$1" in
     start)
         shift
         lb_start $@
+        ;;
+    run)
+        shift
+        lb_run $@
         ;;
     *)
         lb_error "Unknown action $1"
