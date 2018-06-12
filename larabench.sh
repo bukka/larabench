@@ -91,20 +91,23 @@ function lb_run {
     if [ -n "$2" ]; then
         LB_RUN_THREADS="$2"
     else
-        LB_RUN_THREADS=8
+        LB_RUN_THREADS=1
     fi
     if [ -n "$3" ]; then
         LB_RUN_CONNS="$3"
     else
-        LB_RUN_CONNS=8
+        LB_RUN_CONNS=1
     fi
     if [ -n "$4" ]; then
         LB_RUN_APP="$4"
     else
-        LB_RUN_APP=wrk
+        LB_RUN_APP=ab
+    fi
+    if [ $LB_RUN_APP == "ab" ]; then
+        LB_RUN_FLAGS="-k"
     fi
 
-    lb_cmd $LB_RUN_APP -t$LB_RUN_THREADS -c$LB_RUN_CONNS http://localhost:8083/$LB_RUN_PATH
+    lb_cmd $LB_RUN_APP -t$LB_RUN_THREADS $LB_RUN_FLAGS -c$LB_RUN_CONNS http://localhost:8083/$LB_RUN_PATH
 }
 
 if [ -z "$1" ]; then
