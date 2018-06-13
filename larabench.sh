@@ -91,17 +91,17 @@ function lb_run {
     if [ -n "$2" ]; then
         LB_RUN_THREADS="$2"
     else
-        LB_RUN_THREADS=1
+        LB_RUN_THREADS=8
     fi
     if [ -n "$3" ]; then
         LB_RUN_CONNS="$3"
     else
-        LB_RUN_CONNS=1
+        LB_RUN_CONNS=8
     fi
     if [ -n "$4" ]; then
         LB_RUN_APP="$4"
     else
-        LB_RUN_APP=ab
+        LB_RUN_APP=wrk
     fi
     if [ $LB_RUN_APP == "ab" ]; then
         LB_RUN_FLAGS="-k"
