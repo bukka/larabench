@@ -35,7 +35,13 @@ class LogController extends Controller
     public function log($level, $size = self::DEFAULT_SIZE)
     {
         $message = str_repeat(self::CHAR, $size);
-        $this->logger->log($level, $message);
+        if ($level === 'repeat') {
+            for ($i = 1; $i < 1000; $i++) {
+                $this->logger->log('error', $message);
+            }
+        } else {
+            $this->logger->log($level, $message);
+        }
 
         return response()->json(
             [
